@@ -34,7 +34,7 @@ class DishController{
             ingredients
         })
     };
-
+    
     async delete(req, res){
         const {id} = req.params;
         
@@ -44,27 +44,27 @@ class DishController{
     };
 
     async index(req, res){
-        const {name, ingredients} = req.query;
-        let dish;
-
-        if(ingredients){
-            const filterIngredients = ingredients
-            .split(',').map(ingredient =>ingredient.trim());
+        // const {name, ingredients} = req.query;
+        // let dish;
+        const dish = await knex('dish').orderBy('name');
+        // if(ingredients){
+        //     const filterIngredients = ingredients
+        //     .split(',').map(ingredient =>ingredient.trim());
            
-            dish = await knex('ingredients')
-            .select([
-                'dish.id',
-                'dish.name',
-            ])
-            .whereLike('dish.name', `%${name}%`)
-            .whereIn('ingredients.name', filterIngredients)
-            .innerJoin('dish', 'dish.id', 'ingredients.dish_id')
+        //     dish = await knex('ingredients')
+        //     .select([
+        //         'dish.id',
+        //         'dish.name',
+        //     ])
+        //     .whereLike('dish.name', `%${name}%`)
+        //     .whereIn('ingredients.name', filterIngredients)
+        //     .innerJoin('dish', 'dish.id', 'ingredients.dish_id')
 
-        }else{
-            dish = await knex('dish')
-            .whereLike('name', `%${name}%`)
-            .orderBy('name');
-        }
+        // }else{
+        //     dish = await knex('dish')
+        //     .whereLike('name', `%${name}%`)
+        //     .orderBy('name');
+        // }
 
         return res.json(dish);
     }; //rever essa parte pois os parametros vai junto no inpu
