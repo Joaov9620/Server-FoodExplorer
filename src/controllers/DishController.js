@@ -95,10 +95,10 @@ class DishController{
         // }
 
         res.status(201).json();
-    }
+    }//rever essa parte
 
     async show(req, res){
-        const {dish_id} = req.params;
+        const {id} = req.params;
 
         const dish = await knex('dish').where({id}).first(); //verificar a parte do first se precisa 
         const ingredients = await knex('ingredients').where({dish_id: id}).orderBy('name');
