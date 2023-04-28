@@ -92,7 +92,7 @@ class DishController{
     async show(req, res){
         const {id} = req.params;
 
-        const dish = await knex('dish').where({id});
+        const dish = await knex('dish').where({id}).first();
         const ingredients = await knex('ingredients').where({dish_id: id}).orderBy('name');
 
         return res.json({
