@@ -10,14 +10,9 @@ class SessionsController{
         const {email, password} = req.body;
 
         const user = await knex("users").where({email}).first();
-
-        if(!user){
-            throw new AppError("E-mail e/ou senha incorreta", 401);
-        }
-
         const passwordUser = await compare(password, user.password);
 
-        if(!passwordUser){
+        if(!user || !passwordUser){
             throw new AppError("E-mail e/ou senha incorreta", 401);
         }
 
@@ -25,10 +20,14 @@ class SessionsController{
 
         const isAdmin = user.type === 'employee';
 
-        const token = sign({ admin: isAdmin }, secret,{
-            subject: String(user.id),
-            expiresIn,
-        })
+        const token = sign(
+            { admin: isAdmin },
+            secret,
+            {
+                subject: String(user.id),
+                expiresIn,
+            }
+        );
 
         return res.json({user, token});
     };

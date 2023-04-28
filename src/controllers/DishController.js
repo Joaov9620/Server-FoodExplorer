@@ -5,10 +5,9 @@ class DishController{
     async create(req, res){
         const {name, price, description, ingredients, category} = req.body;
 
-        const checkEmailExists = await knex('dish').where({name}).first();
-
-        if(checkEmailExists){
-            throw new AppError("Este prato ja exisite!") 
+        const dishExists = await knex('dish').where({name}).first();
+        if(dishExists){
+            throw new AppError("Este prato ja exisite!") ;
         }
 
         const [dish_id] = await knex('dish').insert({
@@ -18,12 +17,10 @@ class DishController{
             category,
         });
 
-        const ingredientsInsert = ingredients.map(name => {
-            return{
-                dish_id,
-                name
-            }
-        });
+        const ingredientsInsert = ingredients.map(name => ({
+            dish_id,
+            name
+        }));
 
         await knex('ingredients').insert(ingredientsInsert);
 
@@ -34,14 +31,19 @@ class DishController{
         const {name, price, description, ingredients, category} = req.body;
         const {id} = req.params;
 
-        // const checkEmailExists = await knex('dish').where({name}).first();
+        const dish = await knex('dish').where({ id }).first();
+        if (!dish) {
+            throw new AppError('Prato não encontrado!');
+        }
 
-        // if(checkEmailExists){
-        //     throw new AppError("Este prato ja exisite!") 
-        // }
+        if (name !== dish.name) {
+            const checkNameExists = await knex('dish').where({ name }).first();
+            if (checkNameExists) {
+              throw new AppError('Este prato já existe!');
+            }
+          }
 
-        // dish.email = email ?? user.email;
-
+        //Atualizar o prato
         await knex('dish').where({ id: id }).update({
           name: name,
           price: price,
@@ -54,53 +56,43 @@ class DishController{
         .where({ dish_id: id })
         .select('id', 'name');
         
-        // Cria uma lista de novos ingredientes que precisam ser adicionados (entender esse bloco!)
+        //Cria uma lista de novos ingredientes que precisam ser adicionados
         const newIngredients = ingredients.filter(ingredient => {
-        return !existingIngredients.some(existingIngredient => {
-            return existingIngredient.name === ingredient;
-        });
+            return !existingIngredients.some(existingIngredient =>{
+                return existingIngredient.name === ingredient
+            });
         }).map(ingredient => {
-        return { dish_id: id, name: ingredient };
-        });
+            return {
+                dish_id: id,
+                name: ingredient
+            }
+        })
 
-        // // Cria uma lista de ingredientes existentes que precisam ser atualizados
-        // const updatedIngredients = existingIngredients.filter(existingIngredient => {
-        // return ingredients.includes(existingIngredient.name);
-        // }).map(existingIngredient => {
-        // return { id: existingIngredient.id, name: existingIngredient.name };
-        // });
+        // Cria uma lista de ingredientes existentes que precisam ser removidos
+        const removedIngredients = existingIngredients.filter(existingIngredient => {
+            return !ingredients.includes(existingIngredient.name);
+            }).map(existingIngredient => {
+                return existingIngredient.id;
+            }
+        );
 
-        // // Cria uma lista de ingredientes existentes que precisam ser removidos
-        // const removedIngredients = existingIngredients.filter(existingIngredient => {
-        // return !ingredients.includes(existingIngredient.name);
-        // }).map(existingIngredient => {
-        // return existingIngredient.id;
-        // });
-
-        // Adiciona novos ingredientes
-        if (newIngredients.length > 0) {
-        await knex('ingredients').insert(newIngredients);
+        //Adiciona novos ingredientes
+        if(newIngredients.length > 0) {
+            await knex('ingredients').insert(newIngredients);
         }
 
-        // // Atualiza ingredientes existentes
-        // for (const ingredient of updatedIngredients) {
-        // await knex('ingredients').where({ id: ingredient.id }).update({
-        //     name: ingredient.name
-        // });
-        // }
-
         // // Remove ingredientes existentes
-        // if (removedIngredients.length > 0) {
-        // await knex('ingredients').whereIn('id', removedIngredients).delete();
-        // }
+        if(removedIngredients.length > 0) {
+            await knex('ingredients').whereIn('id', removedIngredients).delete();
+        }
 
         res.status(201).json();
-    }//rever essa parte
+    }
 
     async show(req, res){
         const {id} = req.params;
 
-        const dish = await knex('dish').where({id}).first(); //verificar a parte do first se precisa 
+        const dish = await knex('dish').where({id});
         const ingredients = await knex('ingredients').where({dish_id: id}).orderBy('name');
 
         return res.json({
