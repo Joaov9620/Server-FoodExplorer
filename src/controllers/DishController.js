@@ -5,10 +5,10 @@ class DishController{
     async create(req, res){
         const {name, price, description, ingredients, category} = req.body;
 
-        const dishExists = await knex('dish').where({name}).first();
-        if(dishExists){
-            throw new AppError("Este prato ja exisite!") ;
-        }
+        // const dishExists = await knex('dish').where({name}).first();
+        // if(dishExists){
+        //     throw new AppError("Este prato ja exisite!") ;
+        // }
 
         const [dish_id] = await knex('dish').insert({
             name,
