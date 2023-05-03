@@ -110,30 +110,24 @@ class DishController{
     };
 
     async index(req, res){
-        // const {name, ingredients} = req.query;
-        // let dish;
-        const dish = await knex('dish').orderBy('name');
-        // if(ingredients){
-        //     const filterIngredients = ingredients
-        //     .split(',').map(ingredient =>ingredient.trim());
-           
-        //     dish = await knex('ingredients')
-        //     .select([
-        //         'dish.id',
-        //         'dish.name',
-        //     ])
-        //     .whereLike('dish.name', `%${name}%`)
-        //     .whereIn('ingredients.name', filterIngredients)
-        //     .innerJoin('dish', 'dish.id', 'ingredients.dish_id')
+        const {name} = req.query;
+        let dish;
 
-        // }else{
-        //     dish = await knex('dish')
-        //     .whereLike('name', `%${name}%`)
-        //     .orderBy('name');
-        // }
-
+        if(name){
+            dish = await knex
+            .select('d.*')
+            .from('dish as d')
+            .join('ingredients as i', 'd.id', 'i.dish_id')
+            .whereLike('d.name', `%${name}%`)
+            .orWhereLike('i.name', `%${name}%`)
+            .groupBy('d.id');
+        }else{
+            dish = await knex('dish')
+            .orderBy('name');
+        }
+        
         return res.json(dish);
-    }; //rever essa parte pois os parametros vai junto no inpu
-}
+    };
+} //rever esse codigo pois so pesquisar pelo ingredient
 
 module.exports = DishController;
