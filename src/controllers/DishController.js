@@ -5,10 +5,10 @@ class DishController{
     async create(req, res){
         const {name, price, description, ingredients, category} = req.body;
 
-        // const dishExists = await knex('dish').where({name}).first();
-        // if(dishExists){
-        //     throw new AppError("Este prato ja exisite!") ;
-        // }
+        const dishExists = await knex('dish').where({name}).first();
+        if(dishExists){
+            throw new AppError("Este prato ja exisite!") ;
+        }
 
         const [dish_id] = await knex('dish').insert({
             name,
@@ -111,23 +111,27 @@ class DishController{
 
     async index(req, res){
         const {name} = req.query;
-        let dish;
+        let dish = await knex('dish').orderBy('name');
 
         if(name){
-            dish = await knex
-            .select('d.*')
-            .from('dish as d')
-            .join('ingredients as i', 'd.id', 'i.dish_id')
-            .whereLike('d.name', `%${name}%`)
-            .orWhereLike('i.name', `%${name}%`)
-            .groupBy('d.id');
+            const filteredDishList = dish.filter(dish => dish.name.toLowerCase().includes(name.toLowerCase()));
+            if(filteredDishList.length){
+                return res.json(filteredDishList);
+            }else{
+                dish = await knex
+                .select('d.*')
+                .from('dish as d')
+                .join('ingredients as i', 'd.id', 'i.dish_id')
+                .whereLike('d.name', `%${name}%`)
+                .orWhereLike('i.name', `%${name}%`)
+                .groupBy('d.id');
+
+                return res.json(dish);
+            }
         }else{
-            dish = await knex('dish')
-            .orderBy('name');
-        }
-        
-        return res.json(dish);
+            return res.json(dish);
+        }   
     };
-} //rever esse codigo pois so pesquisar pelo ingredient
+}
 
 module.exports = DishController;
