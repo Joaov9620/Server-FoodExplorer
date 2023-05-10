@@ -5,3 +5,5 @@ exports.up = knex => knex.schema.createTable('orderDish', table => {
 });
 
 exports.down = knex => knex.schema.dropTable('orderDish');
+
+//excluir essa tabela pois n vai precisar

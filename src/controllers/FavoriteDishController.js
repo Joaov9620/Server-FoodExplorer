@@ -33,6 +33,7 @@ class FavoriteDishController{
             return {...dish, isFavorite};
         });
 
+
         if(name){
             const filteredDishList = dish.filter(dish => dish.name.toLowerCase().includes(name.toLowerCase()));
             if(filteredDishList.length){
