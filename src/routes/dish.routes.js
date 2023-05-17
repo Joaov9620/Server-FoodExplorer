@@ -9,15 +9,14 @@ const ensureAuthenticated = require('../middleware/ensureAuthenticated');
 const checkAdmin = require('../middleware/checkAdmin');
 
 const DishController = require('../controllers/DishController');
+const FileDishController = require('../controllers/FileDIshController');
 const dishController = new DishController();
+const fileDIshController = new FileDishController();
 
 dishRouters.use(ensureAuthenticated);
 
 dishRouters.get('/', checkAdmin,dishController.index);
-dishRouters.patch('/fileDish', upload.single('fileDish'), (req, res) =>{
-    console.log(req.file.filename);
-    res.json();
-});
+dishRouters.patch('/fileDish/:id', upload.single('fileDish'), fileDIshController.update);
 dishRouters.post('/',checkAdmin, dishController.create);
 dishRouters.put('/:id',checkAdmin, dishController.update);
 dishRouters.get('/:id', dishController.show);

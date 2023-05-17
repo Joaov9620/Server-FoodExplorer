@@ -18,7 +18,7 @@ class DiskStorage{
         }catch{
             return;
         }
-        await fs.promises.delete(filePath);
+        await fs.promises.unlink(filePath);
     }
 };
 
