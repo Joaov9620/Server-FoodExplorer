@@ -3,8 +3,15 @@ const AppError = require("../utils/AppError");
 
 class DishController{
     async create(req, res) {
-        const { name, price, description, ingredients, category, img } = req.body;
-        console.log(img) //verificar por que o nome não está sendo salvo
+        const { name, price, description, ingredients, category} = req.body;
+        const img = null;
+        if(req.file){
+            img = req.file.fileName;
+        }
+
+        // console.log(price)
+        // return console.log(price.typeof);
+
         const dishExists = await knex('dish').where({ name }).first();
         if (dishExists) {
           throw new AppError('Este prato já existe!');

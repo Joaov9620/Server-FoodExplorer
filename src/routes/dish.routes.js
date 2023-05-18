@@ -14,7 +14,7 @@ const fileDIshController = new FileDishController();
 dishRouters.use(ensureAuthenticated);
 
 dishRouters.get('/', checkAdmin, dishController.index);
-dishRouters.post("/", dishController.create);
+dishRouters.post("/", uploadImage.single('fileDish'), dishController.create);
 dishRouters.patch('/fileDish/:id', uploadImage.single('fileDish'), fileDIshController.update);
 dishRouters.put('/:id',checkAdmin, dishController.update);
 dishRouters.get('/:id', dishController.show);

@@ -6,8 +6,13 @@ const {sign} = require('jsonwebtoken');
 class SessionsController{
     async create(req, res){
         const {email, password} = req.body;
-
+        
         const user = await knex("users").where({email}).first();
+        
+        if(!user){
+            throw new AppError("Usuário não encontrado!", 401)
+        }
+
         const passwordUser = await compare(password, user.password);
 
         if(!user || !passwordUser){
