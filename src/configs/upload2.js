@@ -15,6 +15,7 @@ const UPLOADS_SETTINGS = {
   }),
 }
 
+
 const uploadImage = multer({storage: UPLOADS_SETTINGS.storage});
 
 module.exports = {

@@ -1,6 +1,7 @@
 const knex = require('../database');
 const AppError = require('../utils/AppError');
 const DiskStorage = require('../providers/DiskStorage');
+const { UPLOADS_FOLDER } = require('../configs/upload2');
 
 class FileDishController{
     async update(req, res){
@@ -32,6 +33,16 @@ class FileDishController{
        }catch(error){
          return res.status(500).json(error)
        }
+    }
+
+    async upload(req, res) {
+      if (!req.file) {
+        return res.status(400).json({ error: 'Nenhuma imagem enviada' });
+      }
+    
+      // const imagePath = `${UPLOADS_FOLDER}/${req.file.filename}`; --caso quiser retornar com o caminho completo
+      const imagePath = `${req.file.filename}`;
+      return res.status(200).json({ imagePath });
     }
 }
 
