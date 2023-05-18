@@ -4,6 +4,7 @@ const AppError = require("../utils/AppError");
 class DishController{
     async create(req, res){
         const {name, price, description, ingredients, category} = req.body;
+        const img = req.file.filename;
 
         const dishExists = await knex('dish').where({name}).first();
         if(dishExists){
@@ -15,6 +16,7 @@ class DishController{
             price,
             description,
             category,
+            img
         });
 
         const ingredientsInsert = ingredients.map(name => ({
@@ -103,7 +105,7 @@ class DishController{
     
     async delete(req, res){
         const {id} = req.params;
-        
+                
         await knex('dish').where({id}).delete();
         
         return res.json();

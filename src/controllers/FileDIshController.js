@@ -4,13 +4,17 @@ const DiskStorage = require('../providers/DiskStorage');
 
 class FileDishController{
     async update(req, res){
+       try{
         const id = req.params.id;
+        
         const dishFileName = req.file.filename; 
+        console.log(dishFileName)
+
         const diskStorage = new DiskStorage();
 
         const dish = await knex('dish')
         .where({id }).first();
-          
+        
         if(!dish){
             throw new AppError("Prato não encontrado!");
         }
@@ -25,6 +29,9 @@ class FileDishController{
         await knex('dish').update(dish).where({id});
 
         return res.json(dish);  
+       }catch(error){
+         return res.status(500).json(error)
+       }
     }
 }
 
