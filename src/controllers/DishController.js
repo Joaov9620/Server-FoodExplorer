@@ -4,7 +4,11 @@ const AppError = require("../utils/AppError");
 class DishController{
     async create(req, res){
         const {name, price, description, ingredients, category} = req.body;
-        const img = req.file.filename;
+        const img = null;
+
+        if (req.file) {
+            img = req.file.filename;
+        }
 
         const dishExists = await knex('dish').where({name}).first();
         if(dishExists){
@@ -19,10 +23,14 @@ class DishController{
             img
         });
 
+          
+
         const ingredientsInsert = ingredients.map(name => ({
             dish_id,
             name
         }));
+
+        console.log(ingredientsInsert)  
 
         await knex('ingredients').insert(ingredientsInsert);
 
