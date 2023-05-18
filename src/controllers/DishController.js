@@ -3,19 +3,19 @@ const AppError = require("../utils/AppError");
 
 class DishController{
     async create(req, res) {
-        const { name, price, description, ingredients, category } = req.body;
-      
+        const { name, price, description, ingredients, category, img } = req.body;
+        console.log(img) //verificar por que o nome não está sendo salvo
         const dishExists = await knex('dish').where({ name }).first();
         if (dishExists) {
           throw new AppError('Este prato já existe!');
-        }
+        } 
       
         const [dish_id] = await knex('dish').insert({
           name,
           price,
           description,
           category,
-          img: req.file ? req.file.filePath : null, // Salva o caminho da imagem no banco de dados
+          img
         });
       
         const ingredientsInsert = ingredients.map(name => ({
