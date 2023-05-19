@@ -9,7 +9,6 @@ class FileDishController{
         const id = req.params.id;
         
         const dishFileName = req.file.filename; 
-        console.log(dishFileName)
 
         const diskStorage = new DiskStorage();
 
