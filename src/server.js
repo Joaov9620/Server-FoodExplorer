@@ -1,7 +1,7 @@
 require('express-async-errors');
 const AppError = require('./utils/AppError');
+require('dotenv/config'); 
 
-// const uploadConfig = require('./configs/upload');
 const { UPLOADS_FOLDER } = require('./configs/upload2');
 
 const express = require('express');
