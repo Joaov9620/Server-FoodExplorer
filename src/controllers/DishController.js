@@ -9,9 +9,6 @@ class DishController{
             img = req.file.fileName;
         }
 
-        // console.log(price)
-        // return console.log(price.typeof);
-
         const dishExists = await knex('dish').where({ name }).first();
         if (dishExists) {
           throw new AppError('Este prato já existe!');
