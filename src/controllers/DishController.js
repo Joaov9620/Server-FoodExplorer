@@ -1,13 +1,16 @@
 const knex = require('../database');
 const AppError = require("../utils/AppError");
+const DiskStorage = require('../providers/DiskStorage');
 
 class DishController{
     async create(req, res) {
         const { name, price, description, ingredients, category} = req.body;
         let img = null;
+
         if(req.file){
-            img = req.file.fileName;
+            img = req.file.filename;
         }
+       
         const dishExists = await knex('dish').where({ name }).first();
         if (dishExists) {
           throw new AppError('Este prato já existe!');
@@ -109,9 +112,25 @@ class DishController{
     async delete(req, res){
         const {id} = req.params;
                 
-        await knex('dish').where({id}).delete();
+        try{
+            const dish = await knex('dish')
+            .select('img')
+            .where({ id })
+            .first();
+    
+            await knex('dish')
+            .where({ id })
+            .delete();
         
-        return res.json();
+            if (dish.img) {
+              const storage = new DiskStorage();
+              await storage.deleteFile(dish.img);
+            }
+        
+            return res.json({ success: true });
+        } catch (error) {
+            return res.status(500).json({error: 'Erro ao excluir o prato.'});
+        }
     };
 
     async index(req, res){

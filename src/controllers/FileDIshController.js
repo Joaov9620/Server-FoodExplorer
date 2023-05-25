@@ -40,7 +40,7 @@ class FileDishController{
       return res.status(400).json({ error: 'Nenhuma imagem enviada' });
     }
     
-    const imagePath = `${req.file.filename}`;
+    const imagePath = req.file.filename;
     return res.status(200).json({ imagePath });
   }
 }
