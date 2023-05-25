@@ -21,7 +21,7 @@ class DishController{
           price,
           description,
           category,
-          img: img
+          img
         });
       
         const ingredientsInsert = ingredients.map(name => ({
