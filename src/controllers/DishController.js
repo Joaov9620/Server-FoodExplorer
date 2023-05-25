@@ -4,11 +4,10 @@ const AppError = require("../utils/AppError");
 class DishController{
     async create(req, res) {
         const { name, price, description, ingredients, category} = req.body;
-        const img = null;
+        let img = null;
         if(req.file){
             img = req.file.fileName;
         }
-
         const dishExists = await knex('dish').where({ name }).first();
         if (dishExists) {
           throw new AppError('Este prato já existe!');
@@ -19,7 +18,7 @@ class DishController{
           price,
           description,
           category,
-          img
+          img: img
         });
       
         const ingredientsInsert = ingredients.map(name => ({
@@ -47,7 +46,7 @@ class DishController{
             if (checkNameExists) {
               throw new AppError('Este prato já existe!');
             }
-          }
+        }
 
         //Atualizar o prato
         await knex('dish').where({ id: id }).update({
