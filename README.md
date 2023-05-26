@@ -8,7 +8,7 @@ O Delivery Online é uma plataforma de delivery de alimentos online que permite 
 ## ⛏️ Ferramentas utilizadas
 - [NodeJs](https://nodejs.org/en)
 - [Express](https://expressjs.com/en/5x/api.html)
-- [Knex](https://react.dev/](https://knexjs.org/)
+- [Knex](https://knexjs.org/)
 
 ## ⚙️ Instruções de configuração
 ### Clone o projeto
